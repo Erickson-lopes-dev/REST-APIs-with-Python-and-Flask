@@ -28,3 +28,19 @@ hoteis = [
 class Hoteis(Resource):
     def get(self):
         return {'Hoteis': hoteis}
+
+
+class Hotel(Resource):
+    def get(self, hotel_id):
+        for hotel in hoteis:
+            if hotel['hotel_id'] == hotel_id:
+                return hotel
+
+    def post(self, hotel_id):
+        pass
+
+    def put(self, hotel_id):
+        pass
+
+    def delete(self, hotel_id):
+        pass

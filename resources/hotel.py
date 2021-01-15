@@ -1,25 +1,25 @@
-from flask_restful import Resource
+from flask_restful import Resource, reqparse
 
 hoteis = [
     {
         'hotel_id': 'alpha',
         'nome': 'Alpha Hotel',
         'estrelas': 4.3,
-        'diaia': 423.34,
+        'diaria': 423.34,
         'cidade': 'Rio'
     },
     {
         'hotel_id': 'Paladins',
         'nome': 'Cundi Hotel',
         'estrelas': 3.7,
-        'diaia': 200.00,
+        'diaria': 200.00,
         'cidade': 'Rio'
     },
     {
         'hotel_id': 'Fiulad',
         'nome': 'GUloia Hotel',
         'estrelas': 1.5,
-        'diaia': 54,
+        'diaria': 54,
         'cidade': 'Montes Claros'
     }
 ]
@@ -35,9 +35,27 @@ class Hotel(Resource):
         for hotel in hoteis:
             if hotel['hotel_id'] == hotel_id:
                 return hotel
+        return {'message': 'hotel not found'}
 
     def post(self, hotel_id):
-        pass
+        # os argumentos recebidos vão ser uma requestparses
+        argumentos = reqparse.RequestParser()
+        # argumentos que queremos receber do json recebido
+        argumentos.add_argument('nome')
+        argumentos.add_argument('estrelas')
+        argumentos.add_argument('diaria')
+        argumentos.add_argument('cidade')
+        # construtor dos dados
+        dados = argumentos.parse_args()
+        # exibe os dados recebidos
+        # print(dados)
+        novo_hotel = {
+            'hotel_id': hotel_id, **dados
+        }
+        hoteis.append(novo_hotel)
+
+        print(novo_hotel)
+        return novo_hotel, 200
 
     def put(self, hotel_id):
         pass

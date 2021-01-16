@@ -12,10 +12,10 @@ class Hotel(Resource):
     # os argumentos recebidos vão ser uma requestparses
     argumentos = reqparse.RequestParser()
     # argumentos que queremos receber do json recebido
-    argumentos.add_argument('nome')
-    argumentos.add_argument('estrelas')
-    argumentos.add_argument('diaria')
-    argumentos.add_argument('cidade')
+    argumentos.add_argument('nome', type=str, required=True, help="The filnds 'nome' cannot be left blank")
+    argumentos.add_argument('estrelas', type=float, required=True, help="The filnds 'estrelas' cannot be left blank")
+    argumentos.add_argument('diaria', type=float, required=True, help="The filnds 'diaria' cannot be left blank")
+    argumentos.add_argument('cidade', type=str, required=True, help="The filnds 'cidade' cannot be left blank")
 
     def get(self, hotel_id):
         hotel = HotelModel.find_hotel(hotel_id)
@@ -33,9 +33,11 @@ class Hotel(Resource):
         # print(dados)
         hotel_obj = HotelModel(hotel_id, **dados)
 
-        hotel_obj.save_hotel()
-
-        return hotel_obj.json()
+        try:
+            hotel_obj.save_hotel()
+            return hotel_obj.json()
+        except Exception as err:
+            return {'message': f'Erro ao salvar os dados {err}'}
 
     def put(self, hotel_id):
         dados = Hotel.argumentos.parse_args()
@@ -44,17 +46,28 @@ class Hotel(Resource):
         hotel_encontrado = HotelModel.find_hotel(hotel_id)
         if hotel_encontrado:
             hotel_encontrado.update_hotel(**dados)
-            hotel_encontrado.save_hotel()
-            return hotel_encontrado.json(), 200
+
+            try:
+                hotel_encontrado.save_hotel()
+                return hotel_encontrado.json(), 200
+            except Exception as err:
+                return {'message': f'Erro ao atualizar os dados {err}'}, 500
 
         # Salvar novo hotel
         hotel_new = HotelModel(hotel_id, **dados)
-        hotel_new.save_hotel()
-        return hotel_new.json(), 201
+        try:
+            hotel_new.save_hotel()
+            return hotel_new.json(), 201
+        except Exception as err:
+            return {'message': f'Erro ao salvar os dados {err}'}, 500
 
     def delete(self, hotel_id):
         hotel = HotelModel.find_hotel(hotel_id)
         if hotel:
-            hotel.delete_hotel()
-            return {'message': f"Hotel '{hotel_id}' deleted."}
+            try:
+                hotel.delete_hotel()
+                return {'message': f"Hotel '{hotel_id}' deleted."}
+            except Exception as err:
+                return {'message': f'Erro ao Deletar os dados {err}'}
+
         return {'message': f"Hotel '{hotel_id}' not found."}, 404

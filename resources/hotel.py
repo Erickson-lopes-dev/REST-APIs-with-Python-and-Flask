@@ -42,9 +42,9 @@ class Hotel(Resource):
     argumentos.add_argument('cidade')
 
     def get(self, hotel_id):
-        hotel = Hotel.find_hotel(hotel_id)
+        hotel = HotelModel.find_hotel(hotel_id)
         if hotel:
-            return hotel
+            return hotel.json()
         return {'message': 'hotel not found'}, 404
 
     def post(self, hotel_id):
@@ -64,17 +64,17 @@ class Hotel(Resource):
     def put(self, hotel_id):
         dados = Hotel.argumentos.parse_args()
 
-        hotel_obj = HotelModel(hotel_id, **dados)
+        # atualizar hotel se for encontrado
+        hotel_encontrado = HotelModel.find_hotel(hotel_id)
+        if hotel_encontrado:
+            hotel_encontrado.update_hotel(**dados)
+            hotel_encontrado.save_hotel()
+            return hotel_encontrado.json(), 200
 
-        novo_hotel = hotel_obj.json()
-
-        hotel = Hotel.find_hotel(hotel_id)
-        if hotel:
-            hotel.update(novo_hotel)
-            return novo_hotel, 200
-
-        hoteis.append(novo_hotel)
-        return novo_hotel, 201
+        # Salvar novo hotel
+        hotel_new = HotelModel(hotel_id, **dados)
+        hotel_new.save_hotel()
+        return hotel_new.json(), 201
 
     def delete(self, hotel_id):
         global hoteis

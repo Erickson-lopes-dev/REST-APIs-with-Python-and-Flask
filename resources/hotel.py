@@ -1,3 +1,4 @@
+from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
 
 from models.hotel import HotelModel
@@ -23,6 +24,7 @@ class Hotel(Resource):
             return hotel.json()
         return {'message': 'hotel not found'}, 404
 
+    @jwt_required
     def post(self, hotel_id):
         # Cerificando se o id do hotel existe
         if HotelModel.find_hotel(hotel_id):
@@ -39,6 +41,7 @@ class Hotel(Resource):
         except Exception as err:
             return {'message': f'Erro ao salvar os dados {err}'}
 
+    @jwt_required
     def put(self, hotel_id):
         dados = Hotel.argumentos.parse_args()
 
@@ -61,6 +64,7 @@ class Hotel(Resource):
         except Exception as err:
             return {'message': f'Erro ao salvar os dados {err}'}, 500
 
+    @jwt_required
     def delete(self, hotel_id):
         hotel = HotelModel.find_hotel(hotel_id)
         if hotel:

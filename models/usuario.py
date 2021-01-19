@@ -14,9 +14,9 @@ class UserModel(banco.Model):
 
     def json(self):
         return {
-            'user_id': self.login,
+            'user_id': self.user_id,
             'login': self.login
-        }
+            }
 
     @classmethod
     def find_user(cls, user_id):
@@ -30,10 +30,9 @@ class UserModel(banco.Model):
         user = cls.query.filter_by(login=login).first()  # SELECT * FROM hoteis WHERE hotel_id = hotel_id
         if user:
             return user
-        return None
+        return False
 
     def save_user(self):
-        # adiciona o obj no banco
         banco.session.add(self)
         banco.session.commit()
 

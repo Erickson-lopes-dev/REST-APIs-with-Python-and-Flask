@@ -1,7 +1,8 @@
-from flask_jwt_extended import create_access_token, jwt_required
+from flask_jwt_extended import create_access_token, jwt_required, get_raw_jwt
 from flask_restful import Resource, reqparse
 from werkzeug.security import safe_str_cmp
 
+from blacklist import BLACKLIST
 from models.usuario import UserModel
 
 # os argumentos recebidos vão ser uma requestparses
@@ -60,3 +61,13 @@ class UserLogin(Resource):
             return {'access_token': token_de_acesso}, 200
 
         return {'message': 'The username or password is incorrect.'}, 401  # nao autorizado
+
+
+class UserLogout(Resource):
+    @jwt_required
+    def post(self):
+        # pega o id do jwt
+        jwt_id = get_raw_jwt()['jti']  # JWT TOKEN IDENTIFIER
+        # adicionar na Blacklist para retirar o acesso
+        BLACKLIST.add(jwt_id)
+        return {'message': 'Logged out successfully!'}, 200

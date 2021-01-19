@@ -19,7 +19,7 @@ class UserModel(banco.Model):
         }
 
     @classmethod
-    def find_hotel(cls, user_id):
+    def find_user(cls, user_id):
         user = cls.query.filter_by(user_id=user_id).first()  # SELECT * FROM hoteis WHERE hotel_id = hotel_id
         if user:
             return user

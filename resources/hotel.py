@@ -4,12 +4,7 @@ from models.hotel import HotelModel
 import sqlite3
 
 
-def normalize_path_params(cidade=None,
-                          estrelas_min=0,
-                          estrelas_max=5,
-                          diaria_min=0,
-                          diaria_max=10000,
-                          limit=50,
+def normalize_path_params(cidade=None, estrelas_min=0, estrelas_max=5, diaria_min=0, diaria_max=10000, limit=50,
                           offset=0, **dados):
     if cidade:
         return {
@@ -22,13 +17,13 @@ def normalize_path_params(cidade=None,
             'offset': offset
         }
     return {
-            'estrelas_min': estrelas_min,
-            'estrelas_max': estrelas_max,
-            'diaria_min': diaria_min,
-            'diaria_max': diaria_max,
-            'limit': limit,
-            'offset': offset
-        }
+        'estrelas_min': estrelas_min,
+        'estrelas_max': estrelas_max,
+        'diaria_min': diaria_min,
+        'diaria_max': diaria_max,
+        'limit': limit,
+        'offset': offset
+    }
 
 
 path_params = reqparse.RequestParser()
@@ -43,9 +38,21 @@ path_params.add_argument('offset', type=float)
 
 class Hoteis(Resource):
     def get(self):
+        # Criando conexao com o banco
+        connection = sqlite3.connect('banco.db')
+        cursos = connection.cursor()
+
         dados = path_params.parse_args()
         # recebe toda chave se o valor que nao for nulo/None
         dados_validos = {chave: dados[chave] for chave in dados if dados[chave] is not None}
+        # se não for retornado nada irá retornar os parametros default
+        parametros = normalize_path_params(**dados_validos)
+
+        # cidade = parametros.get('cidade')  # Verifica se existe
+        if parametros.get('cidade'):
+            consulta = 'SELECT * FROM hoteis WHERE (estrelas > ? and estrelas < ?) and (diaria > ? and diaria < ?) ' \
+                       'LIMIT ? OFFSET ?'
+
         return {'Hoteis': [hotel.json() for hotel in HotelModel.query.all()]}
 
 

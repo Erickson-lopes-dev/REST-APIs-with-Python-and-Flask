@@ -49,11 +49,33 @@ class Hoteis(Resource):
         parametros = normalize_path_params(**dados_validos)
 
         # cidade = parametros.get('cidade')  # Verifica se existe
-        if parametros.get('cidade'):
-            consulta = 'SELECT * FROM hoteis WHERE (estrelas > ? and estrelas < ?) and (diaria > ? and diaria < ?) ' \
+        if not parametros.get('cidade'):
+            # consulta a ser realizada
+            consulta = 'SELECT * FROM hoteis ' \
+                       'WHERE (estrelas > ? and estrelas < ?) ' \
+                       'and (diaria > ? and diaria < ?) ' \
+                       'LIMIT ? OFFSET ?'
+            # envolve os itens em uma tupla
+            tupla = tuple([parametros[chave] for chave in parametros])
+
+            # realiza a consulta passando os valores na tupla
+            resultado = cursos.execute(consulta, tupla)
+
+        else:
+            # consulta a ser realizada / com cidade
+            consulta = 'SELECT * FROM hoteis ' \
+                       'WHERE (estrelas > ? and estrelas < ?) ' \
+                       'and (diaria > ? and diaria < ?) ' \
+                       'and (cidade = ?) ' \
                        'LIMIT ? OFFSET ?'
 
-        return {'Hoteis': [hotel.json() for hotel in HotelModel.query.all()]}
+            # envolve os itens em uma tupla
+            tupla = tuple([parametros[chave] for chave in parametros])
+
+            # realiza a consulta passando os valores na tupla
+            resultado = cursos.execute(consulta, tupla)
+
+        return {'hoteis': [hotel.json for hotel in HotelModel.query()]}
 
 
 class Hotel(Resource):

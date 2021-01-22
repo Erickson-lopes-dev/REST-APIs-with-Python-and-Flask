@@ -1,7 +1,6 @@
 from flask import Flask
 from flask.json import jsonify
 from flask_restful import Api
-
 from blacklist import BLACKLIST
 from resources.hotel import Hoteis, Hotel
 from resources.usuario import User, UserRegister, UserLogin, UserLogout

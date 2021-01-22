@@ -75,7 +75,19 @@ class Hoteis(Resource):
             # realiza a consulta passando os valores na tupla
             resultado = cursos.execute(consulta, tupla)
 
-        return {'hoteis': [hotel.json for hotel in HotelModel.query()]}
+        hoteis = []
+
+        for linha in resultado:
+            # para cada linha do restuldado será gerado um dicionario com os dados recebido
+            hoteis.append({
+                'hotel_id': linha[0],
+                'nome': linha[1],
+                'estrelas': linha[2],
+                'diaria': linha[3],
+                'cidade': linha[4]
+            })
+
+        return {'hoteis': hoteis}
 
 
 class Hotel(Resource):

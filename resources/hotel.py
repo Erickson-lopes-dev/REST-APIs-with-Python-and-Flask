@@ -16,6 +16,8 @@ path_params.add_argument('offset', type=float)
 class Hoteis(Resource):
     def get(self):
         dados = path_params.parse_args()
+        # recebe toda chave se o valor que nao for nulo/None
+        dados_validos = {chave: dados[chave] for chave in dados if dados[chave] is not None}
         return {'Hoteis': [hotel.json() for hotel in HotelModel.query.all()]}
 
 

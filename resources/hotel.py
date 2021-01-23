@@ -29,23 +29,18 @@ class Hoteis(Resource):
 
         # cidade = parametros.get('cidade')  # Verifica se existe
         if not parametros.get('cidade'):
-            # consulta a ser realizada
-            consulta = consulta_sem_cidade
             # envolve os itens em uma tupla
             tupla = tuple([parametros[chave] for chave in parametros])
 
             # realiza a consulta passando os valores na tupla
-            resultado = cursos.execute(consulta, tupla)
+            resultado = cursos.execute(consulta_sem_cidade, tupla)
 
         else:
-            # consulta a ser realizada / com cidade
-            consulta = consulta_com_cidade
-
             # envolve os itens em uma tupla
             tupla = tuple([parametros[chave] for chave in parametros])
 
             # realiza a consulta passando os valores na tupla
-            resultado = cursos.execute(consulta, tupla)
+            resultado = cursos.execute(consulta_com_cidade, tupla)
 
         hoteis = []
 

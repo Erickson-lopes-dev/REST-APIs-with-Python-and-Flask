@@ -26,6 +26,13 @@ class SiteModel(banco.Model):
             return site
         return None
 
+    @classmethod
+    def find_by_id(cls, site_id):
+        site = cls.query.filter_by(site_id=site_id).first()  # SELECT * FROM hoteis WHERE hotel_id = hotel_id
+        if site:
+            return site
+        return None
+
     def save_site(self):
         # adiciona o obj no banco
         banco.session.add(self)

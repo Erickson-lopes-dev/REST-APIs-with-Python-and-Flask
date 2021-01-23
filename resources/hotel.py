@@ -3,6 +3,7 @@ from flask_restful import Resource, reqparse
 from models.hotel import HotelModel
 import sqlite3
 
+from models.site import SiteModel
 from resources.filtros import normalize_path_params, consulta_sem_cidade, consulta_com_cidade
 
 path_params = reqparse.RequestParser()
@@ -81,10 +82,10 @@ class Hotel(Resource):
             return {'message': f'hotel id >{hotel_id}< already exists'}, 400  # bed requets
 
         dados = Hotel.argumentos.parse_args()
-        # exibe os dados recebidos
-        # print(dados)
         hotel_obj = HotelModel(hotel_id, **dados)
 
+        if not SiteModel.find_by_id(dados.get('site_id')):
+            return {"message": 'O hotel precisa estar associado a um site'}
         try:
             hotel_obj.save_hotel()
             return hotel_obj.json()

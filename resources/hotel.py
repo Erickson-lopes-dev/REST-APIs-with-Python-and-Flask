@@ -51,7 +51,8 @@ class Hoteis(Resource):
                 'nome': linha[1],
                 'estrelas': linha[2],
                 'diaria': linha[3],
-                'cidade': linha[4]
+                'cidade': linha[4],
+                'site_id': linha[5],
             })
 
         return {'hoteis': hoteis}
@@ -65,6 +66,7 @@ class Hotel(Resource):
     argumentos.add_argument('estrelas', type=float, required=True, help="The filnds 'estrelas' cannot be left blank")
     argumentos.add_argument('diaria', type=float, required=True, help="The filnds 'diaria' cannot be left blank")
     argumentos.add_argument('cidade', type=str, required=True, help="The filnds 'cidade' cannot be left blank")
+    argumentos.add_argument('site_id', type=int, required=True, help="The filnds 'Site' cannot be left blank")
 
     def get(self, hotel_id):
         hotel = HotelModel.find_hotel(hotel_id)

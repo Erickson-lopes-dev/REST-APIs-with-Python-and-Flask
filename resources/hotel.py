@@ -3,28 +3,7 @@ from flask_restful import Resource, reqparse
 from models.hotel import HotelModel
 import sqlite3
 
-
-def normalize_path_params(cidade=None, estrelas_min=0, estrelas_max=5, diaria_min=0, diaria_max=10000, limit=50,
-                          offset=0, **dados):
-    if cidade:
-        return {
-            'estrelas_min': estrelas_min,
-            'estrelas_max': estrelas_max,
-            'diaria_min': diaria_min,
-            'diaria_max': diaria_max,
-            'cidade': cidade,
-            'limit': limit,
-            'offset': offset
-        }
-    return {
-        'estrelas_min': estrelas_min,
-        'estrelas_max': estrelas_max,
-        'diaria_min': diaria_min,
-        'diaria_max': diaria_max,
-        'limit': limit,
-        'offset': offset
-    }
-
+from resources.filtros import normalize_path_params, consulta_sem_cidade, consulta_com_cidade
 
 path_params = reqparse.RequestParser()
 path_params.add_argument('cidade', type=str)
@@ -51,10 +30,7 @@ class Hoteis(Resource):
         # cidade = parametros.get('cidade')  # Verifica se existe
         if not parametros.get('cidade'):
             # consulta a ser realizada
-            consulta = 'SELECT * FROM hoteis ' \
-                       'WHERE (estrelas >= ? and estrelas <= ?) ' \
-                       'and (diaria >= ? and diaria <= ?) ' \
-                       'LIMIT ? OFFSET ?'
+            consulta = consulta_sem_cidade
             # envolve os itens em uma tupla
             tupla = tuple([parametros[chave] for chave in parametros])
 
@@ -63,11 +39,7 @@ class Hoteis(Resource):
 
         else:
             # consulta a ser realizada / com cidade
-            consulta = 'SELECT * FROM hoteis ' \
-                       'WHERE (estrelas >= ? and estrelas <= ?) ' \
-                       'and (diaria >= ? and diaria <= ?) ' \
-                       'and (cidade = ?) ' \
-                       'LIMIT ? OFFSET ?'
+            consulta = consulta_com_cidade
 
             # envolve os itens em uma tupla
             tupla = tuple([parametros[chave] for chave in parametros])

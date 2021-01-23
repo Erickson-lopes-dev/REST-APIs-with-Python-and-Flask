@@ -16,7 +16,7 @@ class SiteModel(banco.Model):
         return {
             'site_id': self.site_id,
             'url': self.url,
-            'hoteis': [hotel.json for hotel in self.hoteis]  # self.hoteis -> esta dentro do self recebido do obj
+            'hoteis': [hotel.json() for hotel in self.hoteis]  # self.hoteis -> esta dentro do self recebido do obj
         }
 
     @classmethod
@@ -39,8 +39,8 @@ class SiteModel(banco.Model):
         banco.session.commit()
 
     def delete_site(self):
-        # Deletar todos os hoteis relacionados
-        [hotel.delete_hotel()for hotel in self.hoteis]
-        # Deleta o site
+        # deletando todos hoteis associados ao site
+        [hotel.delete_hotel() for hotel in self.hoteis]
+        # deletando site
         banco.session.delete(self)
         banco.session.commit()

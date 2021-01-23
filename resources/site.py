@@ -20,23 +20,18 @@ class Site(Resource):
     @jwt_required
     def post(self, url):
         if SiteModel.find_site(url):
-            return {"message": f'The site {url} already exists'}, 400
+            return {"message": "The site '{}' already exists."}, 400 # bad request
+        site = SiteModel(url)
         try:
-            site = SiteModel(url)
             site.save_site()
-            return site.json()
         except Exception as error:
-            return {'message': error}
+            return {'message': f'An internal error ocurred trying to create a new site. {error}'}, 500
+        return site.json()
 
     @jwt_required
     def delete(self, url):
         site = SiteModel.find_site(url)
         if site:
-            try:
-                site = SiteModel(url)
-                site.delete_site()
-                return {'message', "site deleted"}
-            except Exception as error:
-                return {'message': error}
-
-        return {'message': 'Site not found'}
+            site.delete_site()
+            return {'message': 'Site deleted.'}
+        return {'message': 'Site not found.'}, 404
